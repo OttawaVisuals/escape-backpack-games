@@ -11,37 +11,42 @@
   --acc:#00d9f5;--grn:#00e896;--red:#ff4060;--warn:#ffb800;
   --text:#dde1ed;--muted:#424860;
   --mono:'Share Tech Mono',monospace;--sans:'Quantico',sans-serif;--r:6px;
-  --p:clamp(10px,3vw,20px);
-  --gap:clamp(5px,1.5vw,10px);
+  --p:clamp(10px,3vw,20px);--gap:clamp(5px,1.5vw,10px);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  min-height:100%;width:100%;
-  overflow-x:hidden; /* critical — prevents horizontal scroll in iframe */
+html,body{min-height:100%;width:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);-webkit-font-smoothing:antialiased;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,217,245,.012) 3px,rgba(0,217,245,.012) 4px)}
+
+/* ── MODAL ── */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.75);
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;
 }
-body{
-  background:var(--bg);color:var(--text);font-family:var(--sans);
-  -webkit-font-smoothing:antialiased;
-  background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,217,245,.012) 3px,rgba(0,217,245,.012) 4px);
+.modal-backdrop.on{opacity:1;pointer-events:all}
+.modal{
+  background:var(--surf);border:1px solid var(--brd);border-radius:10px;
+  padding:24px;width:100%;max-width:320px;
 }
+.modal-title{font-size:.9rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text);margin-bottom:8px}
+.modal-msg{font-size:.85rem;line-height:1.6;color:var(--muted);margin-bottom:20px}
+.modal-msg strong{color:var(--acc);font-family:var(--mono)}
+.modal-btns{display:flex;gap:10px}
+.modal-btns .btn{flex:1}
 
 .screen{display:none;justify-content:center;min-height:100vh;padding:16px var(--p) 40px}
 .screen.on{display:flex}
 .wrap{width:100%;max-width:560px;display:flex;flex-direction:column;gap:var(--gap)}
-
-.card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);
-  padding:var(--p);width:100%}
-.lbl{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
-  margin-bottom:10px}
-
+.card{background:var(--surf);border:1px solid var(--brd);border-radius:var(--r);padding:var(--p);width:100%}
+.lbl{font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .field{display:flex;flex-direction:column;gap:6px}
 .fl{font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
 input[type=text]{width:100%;background:var(--bg);border:1px solid var(--brd);border-radius:var(--r);
   color:var(--text);font-family:var(--sans);font-size:clamp(.88rem,3vw,1rem);
-  padding:11px 12px;outline:none;-webkit-appearance:none;
-  transition:border-color .18s,box-shadow .18s}
+  padding:11px 12px;outline:none;-webkit-appearance:none;transition:border-color .18s,box-shadow .18s}
 input[type=text]:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(0,217,245,.1)}
-
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;
   font-family:var(--sans);font-size:clamp(.62rem,2.2vw,.78rem);font-weight:700;
   letter-spacing:.1em;text-transform:uppercase;border:none;border-radius:var(--r);
@@ -54,85 +59,57 @@ input[type=text]:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(0,217,2
 .btn-ghost:hover{color:var(--text);border-color:var(--muted)}
 .btn-success{background:var(--grn);color:#050710}
 .btn-danger{background:transparent;color:var(--red);border:1px solid rgba(255,64,96,.4)}
+.btn-danger:hover{background:rgba(255,64,96,.08)}
+.btn-red{background:var(--red);color:#fff}
 .btn-full{width:100%}
-
-/* SPLASH */
 .splash{text-align:center;padding:8px 0}
-.splash h1{font-size:clamp(1.5rem,6vw,2.6rem);font-weight:700;letter-spacing:.07em;
-  text-transform:uppercase;line-height:1.1}
+.splash h1{font-size:clamp(1.5rem,6vw,2.6rem);font-weight:700;letter-spacing:.07em;text-transform:uppercase;line-height:1.1}
 .splash h1 em{font-style:normal;color:var(--acc)}
-.splash p{margin-top:8px;font-size:clamp(.62rem,2vw,.7rem);letter-spacing:.12em;
-  color:var(--muted);text-transform:uppercase}
-
-/* TIMER */
-.timer-val{font-family:var(--mono);
-  font-size:clamp(2rem,10vw,5rem);
-  color:var(--acc);text-align:center;letter-spacing:.06em;line-height:1;padding:4px 0}
+.splash p{margin-top:8px;font-size:clamp(.62rem,2vw,.7rem);letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.timer-val{font-family:var(--mono);font-size:clamp(2rem,10vw,5rem);color:var(--acc);
+  text-align:center;letter-spacing:.06em;line-height:1;padding:4px 0}
 .timer-val.paused{color:var(--warn);animation:tblink 1.1s ease-in-out infinite}
 @keyframes tblink{0%,100%{opacity:1}50%{opacity:.4}}
 .timer-sub{text-align:center;font-size:clamp(.58rem,1.8vw,.7rem);letter-spacing:.13em;
   text-transform:uppercase;color:var(--muted);margin-top:6px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-
-/* TIMER CONTROLS — flex, shrink on small screens */
 .tctrl{display:flex;gap:clamp(4px,1.5vw,8px);margin-top:12px;flex-wrap:nowrap}
 .tctrl .btn{flex:1;min-width:0;padding:9px 4px;font-size:clamp(.56rem,1.8vw,.72rem)}
 .tctrl .btn svg{width:11px;height:11px;flex-shrink:0}
-/* Hide button text on very narrow screens, keep icons */
 .btn-txt{display:inline}
-
 .prog-wrap{height:4px;background:var(--brd);border-radius:3px;margin-top:12px;overflow:hidden}
 .prog-bar{height:100%;background:var(--grn);border-radius:3px;transition:width .4s ease}
-.prog-lbl{text-align:center;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted);margin-top:6px}
-
-/* LOCK GRID — auto-fill columns that fit, min 52px each */
-.lock-grid{
-  display:grid;
-  grid-template-columns:repeat(5, 1fr);
-  gap:clamp(4px,1.2vw,8px);
-}
-
+.prog-lbl{text-align:center;font-size:.58rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.lock-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(4px,1.2vw,8px)}
 .lc{display:flex;flex-direction:column;align-items:center;gap:3px;
   background:var(--surf2);border:2px solid transparent;border-radius:var(--r);
-  padding:clamp(4px,1.5vw,8px) 2px clamp(6px,2vw,10px);
-  transition:border-color .2s,background .2s,opacity .2s}
+  padding:clamp(4px,1.5vw,8px) 2px clamp(6px,2vw,10px);transition:border-color .2s,background .2s,opacity .2s}
 .lc.active{outline:2px solid var(--acc)}
 .lc.done{opacity:.5;border-color:var(--grn)!important;background:#071510}
 .lc.theme-blue{border-color:#156082}
 .lc.theme-orange{border-color:#C04F15}
 .lc.theme-purple{border-color:#50164A}
-
 .li-wrap{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
 .li-wrap img{width:100%;height:100%;object-fit:contain;display:block}
-
-.lnum{font-size:clamp(.42rem,.12em + .5vw,.55rem);letter-spacing:.08em;
-  color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.lnum{font-size:clamp(.42rem,.5vw + .3rem,.55rem);letter-spacing:.08em;color:var(--muted);font-family:var(--mono);white-space:nowrap}
 .lc.done .lnum{color:var(--grn)}
-
 .lbtns{display:flex;gap:3px}
 .lb{width:clamp(22px,6vw,28px);height:clamp(22px,6vw,28px);border-radius:4px;border:none;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:clamp(.7rem,2.2vw,.85rem);font-weight:700;touch-action:manipulation;
-  transition:transform .1s,background .15s}
+  font-size:clamp(.7rem,2.2vw,.85rem);font-weight:700;touch-action:manipulation;transition:transform .1s,background .15s}
 .lb:active{transform:scale(.88)}
 .lb-done{background:rgba(0,232,150,.12);color:var(--grn);border:1px solid rgba(0,232,150,.25)}
 .lb-done.on{background:var(--grn);color:#050710}
 .lb-hint{background:rgba(0,217,245,.1);color:var(--acc);border:1px solid rgba(0,217,245,.2)}
 .lb-hint.on{background:var(--acc);color:#050710}
-
-/* HINT PANEL */
 #hint-panel{display:none;width:100%}
 #hint-panel.on{display:block}
 .hint-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;gap:8px}
 .hint-title{font-size:clamp(.72rem,2.2vw,.85rem);font-weight:700;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--acc);flex:1;min-width:0;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  text-transform:uppercase;color:var(--acc);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hint-x{background:none;border:1px solid var(--brd);border-radius:var(--r);color:var(--muted);
-  font-size:.7rem;cursor:pointer;padding:4px 8px;font-family:var(--sans);
-  letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+  font-size:.7rem;cursor:pointer;padding:4px 8px;font-family:var(--sans);letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;flex-shrink:0}
 .hint-x:hover{color:var(--text)}
-
 .hs{border-top:1px solid var(--brd)}
 .hs:last-child{border-bottom:1px solid var(--brd)}
 .ht{width:100%;display:flex;align-items:center;justify-content:space-between;
@@ -146,25 +123,31 @@ input[type=text]:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(0,217,2
 .hb.on{display:block}
 .hb img{max-width:100%;border-radius:var(--r);margin:10px 0;display:block}
 .c1{color:var(--warn)}.c2{color:#ff9040}.c3{color:var(--red)}.c4{color:var(--grn)}
-
-/* NARROW MODE — applied by JS when body < 340px */
 body.narrow .btn-txt{display:none}
 body.narrow .lnum{display:none}
 body.narrow .tctrl .btn{padding:9px 6px}
-
-/* COMPLETE */
 .congrats{text-align:center;padding:12px 0}
 .big-check{font-size:3rem;margin-bottom:12px}
-.ctime{font-family:var(--mono);font-size:clamp(2.5rem,10vw,4.5rem);
-  color:var(--grn);letter-spacing:.06em;line-height:1}
-.cteam{margin-top:8px;font-size:clamp(.6rem,1.8vw,.7rem);letter-spacing:.14em;
-  text-transform:uppercase;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
+.ctime{font-family:var(--mono);font-size:clamp(2.5rem,10vw,4.5rem);color:var(--grn);letter-spacing:.06em;line-height:1}
+.cteam{margin-top:8px;font-size:clamp(.6rem,1.8vw,.7rem);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);overflow:hidden;text-overflow:ellipsis}
 .clocks{font-family:var(--mono);font-size:.82rem;color:var(--acc);margin-top:5px}
 .cmsg{margin-top:14px;font-size:.9rem;line-height:1.6;color:var(--text);
   padding:12px;background:rgba(0,232,150,.07);border:1px solid rgba(0,232,150,.2);border-radius:var(--r)}
 </style>
 </head>
 <body>
+
+<!-- CUSTOM MODAL (replaces confirm() which is blocked in iframes) -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">Confirm</div>
+    <div class="modal-msg" id="modal-msg"></div>
+    <div class="modal-btns">
+      <button class="btn btn-ghost" onclick="modalCancel()">Cancel</button>
+      <button class="btn btn-red" id="modal-ok" onclick="modalOk()">Confirm</button>
+    </div>
+  </div>
+</div>
 
 <!-- SETUP -->
 <div class="screen on" id="s-setup">
@@ -178,7 +161,7 @@ body.narrow .tctrl .btn{padding:9px 6px}
       <div class="field">
         <label class="fl" for="inp-team">Your team</label>
         <input type="text" id="inp-team" placeholder="e.g. Team Alpha" maxlength="40"
-               autocomplete="off" oninput="chkSetup()" onkeydown="if(event.key===\'Enter\')startGame()">
+               autocomplete="off" oninput="chkSetup()" onkeydown="if(event.key==='Enter')startGame()">
       </div>
     </div>
     <button class="btn btn-go btn-full" id="btn-start" disabled onclick="startGame()">
@@ -198,15 +181,15 @@ body.narrow .tctrl .btn{padding:9px 6px}
       <div class="timer-val" id="g-timer">00:00</div>
       <div class="timer-sub" id="g-team">—</div>
       <div class="tctrl">
-        <button class="btn btn-ghost" id="btn-pause" onclick="togglePause()">
+        <button class="btn btn-ghost" onclick="togglePause()">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path id="pause-icon" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
           <span class="btn-txt" id="pause-lbl">Pause</span>
         </button>
-        <button class="btn btn-danger" onclick="confirmReset()">
+        <button class="btn btn-danger" onclick="askReset()">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
           <span class="btn-txt">Reset</span>
         </button>
-        <button class="btn btn-success" onclick="confirmComplete()">
+        <button class="btn btn-success" onclick="askComplete()">
           <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
           <span class="btn-txt">Complete!</span>
         </button>
@@ -240,7 +223,7 @@ body.narrow .tctrl .btn{padding:9px 6px}
         <div class="cmsg" id="c-msg"></div>
       </div>
     </div>
-    <button class="btn btn-ghost btn-full" onclick="resetAll()">↩ Play Again</button>
+    <button class="btn btn-ghost btn-full" onclick="askPlayAgain()">↩ Play Again</button>
   </div>
 </div>
 
@@ -329,15 +312,39 @@ const LOCKS = [
   ] },
 ];
 
+// ── MODAL (no confirm() — blocked in iframes) ──────────────
+let modalCallback = null;
+function showModal(title, msg, okLabel, cb) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-msg').innerHTML = msg;
+  document.getElementById('modal-ok').textContent = okLabel;
+  modalCallback = cb;
+  document.getElementById('modal').classList.add('on');
+}
+function modalOk()     { document.getElementById('modal').classList.remove('on'); if(modalCallback) modalCallback(); modalCallback=null; }
+function modalCancel() { document.getElementById('modal').classList.remove('on'); modalCallback=null; }
+
+function askReset() {
+  showModal('Reset Game','Reset the timer and all progress?<br>This cannot be undone.','Reset', resetAll);
+}
+function askComplete() {
+  const done = st.completed.filter(Boolean).length;
+  showModal('Mark Complete',
+    `Stop the timer and mark as complete?<br><br>Time: <strong>${fmt(st.elapsed)}</strong><br>Locks solved: <strong>${done}/10</strong>`,
+    'Complete', endGame);
+}
+function askPlayAgain() {
+  showModal('Play Again','Start a new game? This will clear all progress.','Yes, reset', resetAll);
+}
+
+// ── STATE ──────────────────────────────────────────────────
 const LS_KEY = 'escbp_' + BACKPACK_NAME.replace(/\s+/g,'_');
 let st={team:'',sessionId:'',startMs:0,elapsed:0,paused:false,pausedAt:0,active:false,
         completed:new Array(10).fill(false),hintLog:{},lockTs:{}};
 let ticker=null, activeHint=-1;
 
-// ── NARROW MODE: watch actual rendered width and adapt ──────
-const ro = new ResizeObserver(entries => {
-  const w = entries[0].contentRect.width;
-  document.body.classList.toggle('narrow', w < 340);
+const ro=new ResizeObserver(entries=>{
+  document.body.classList.toggle('narrow', entries[0].contentRect.width < 340);
 });
 ro.observe(document.body);
 
@@ -347,17 +354,14 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(saved&&saved.active) document.getElementById('btn-resume').style.display='block';
 });
 
-function chkSetup(){
-  document.getElementById('btn-start').disabled=!document.getElementById('inp-team').value.trim();
-}
+function chkSetup(){ document.getElementById('btn-start').disabled=!document.getElementById('inp-team').value.trim(); }
 
 function buildGrid(){
   const g=document.getElementById('lock-grid');
   g.innerHTML='';
   LOCKS.forEach((lk,i)=>{
     const d=document.createElement('div');
-    d.className='lc theme-'+LOCK_THEMES[i];
-    d.id='lc'+i;
+    d.className='lc theme-'+LOCK_THEMES[i]; d.id='lc'+i;
     d.innerHTML=`
       <div class="li-wrap"><img src="${LOCK_IMGS[i]}" alt="Lock ${i+1}"></div>
       <div class="lnum">LOCK ${i+1}</div>
@@ -488,11 +492,6 @@ function applyGame(){
   closeHint(); updateGrid(); saveSt(); startTick(); show('game');
 }
 
-function confirmReset(){
-  if(!confirm('Reset the timer and all progress?\nThis cannot be undone.')) return;
-  resetAll();
-}
-
 function resetAll(){
   clearInterval(ticker); ticker=null; clearSt(); activeHint=-1;
   st={team:'',sessionId:'',startMs:0,elapsed:0,paused:false,pausedAt:0,active:false,
@@ -506,12 +505,6 @@ function resetAll(){
   document.getElementById('pause-icon').setAttribute('d','M6 19h4V5H6v14zm8-14v14h4V5h-4z');
   document.getElementById('pause-lbl').textContent='Pause';
   closeHint(); updateGrid(); show('setup');
-}
-
-function confirmComplete(){
-  const done=st.completed.filter(Boolean).length;
-  if(!confirm(`Stop the timer and mark as complete?\n\nTime: ${fmt(st.elapsed)}\nLocks: ${done}/10`)) return;
-  endGame();
 }
 
 function endGame(){
