@@ -135,7 +135,7 @@ input[type=text]:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(0,217,2
 .ht.open .chev{transform:rotate(90deg)}
 .hb{display:none;padding-bottom:14px;font-size:clamp(.82rem,2.5vw,.9rem);line-height:1.7;color:var(--text)}
 .hb.on{display:block}
-.hb img{max-width:100%;border-radius:var(--r);margin:10px 0;display:block}
+.hb img{max-width:100%;height:auto;border-radius:var(--r);margin:10px 0;display:block}
 .c1{color:var(--warn)}.c2{color:#ff9040}.c3{color:var(--red)}.c4{color:var(--grn)}
 
 /* NARROW */
@@ -481,6 +481,8 @@ function openHint(i){
       sec.querySelectorAll('.hb').forEach(b=>b.classList.remove('on'));
       if(!wasOpen){
         tog.classList.add('open'); body.classList.add('on');
+        // After content renders, scroll so the full hint body is visible
+        setTimeout(()=>body.scrollIntoView({behavior:'smooth',block:'nearest'}), 80);
         if(!st.hintLog[i]) st.hintLog[i]=[];
         if(!st.hintLog[i].includes(hi)){
           st.hintLog[i].push(hi);
@@ -493,7 +495,7 @@ function openHint(i){
     wrap.appendChild(tog); wrap.appendChild(body); sec.appendChild(wrap);
   });
   document.getElementById('hint-panel').classList.add('on');
-  setTimeout(()=>document.getElementById('hint-panel').scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+  setTimeout(()=>document.getElementById('hint-panel').scrollIntoView({behavior:'smooth',block:'start'}),80);
 }
 
 function closeHint(){
