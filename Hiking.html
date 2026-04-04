@@ -567,8 +567,7 @@ function resetAll(){
 
 function endGame(){
   clearInterval(ticker); ticker=null; st.active=false;
-  const done=st.completed.filter(Boolean).length;
-  const msg=done===10?'🏆 Amazing — you solved all 10 locks!':`You solved ${done}/10 locks. Keep at it!`;
+  const msg='🎊 Congratulations! Thank you for playing our game!';
   document.getElementById('c-time').textContent=fmt(st.elapsed);
   document.getElementById('c-team').textContent=st.team;
   document.getElementById('c-msg').textContent=msg;
