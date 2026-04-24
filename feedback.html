@@ -298,11 +298,25 @@ function submitFeedback() {
     email: document.getElementById('fbEmail').value.trim() || null,
   };
 
-  console.log('Feedback submitted:', data);
-  // TODO: wire to your backend (Formspree, Google Apps Script, etc.)
-
-  document.getElementById('formWrap').style.display = 'none';
-  document.getElementById('fbThanks').style.display = 'block';
+  // Submit to Formspree
+  fetch('https://formspree.io/f/xaqavoan', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  })
+  .then(response => {
+    if (response.ok) {
+      document.getElementById('formWrap').style.display = 'none';
+      document.getElementById('fbThanks').style.display = 'block';
+    } else {
+      errorEl.textContent = 'Something went wrong. Please try again.';
+      errorEl.style.display = 'block';
+    }
+  })
+  .catch(error => {
+    errorEl.textContent = 'Something went wrong. Please try again.';
+    errorEl.style.display = 'block';
+  });
 }
 
 buildRows();
