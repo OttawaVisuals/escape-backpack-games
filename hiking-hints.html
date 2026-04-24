@@ -182,9 +182,11 @@ input[type=text]:focus{border-color:var(--brass);box-shadow:0 0 0 3px rgba(212,1
 .ht:hover{color:var(--brass)}
 .chev{font-size:.58rem;color:var(--muted);transition:transform .2s;flex-shrink:0;margin-left:6px}
 .ht.open .chev{transform:rotate(90deg)}
-.hb{display:none;padding-bottom:12px;font-size:clamp(.8rem,2.4vw,.88rem);line-height:1.7;color:var(--cream)}
+.hb{display:none;padding-bottom:12px;font-size:clamp(.8rem,2.4vw,.88rem);line-height:1.7;color:var(--cream);
+  word-wrap:break-word;overflow-wrap:break-word}
 .hb.on{display:block}
 .hb img{max-width:100%;height:auto;border-radius:2px;margin:10px 0;display:block}
+.hb strong{word-wrap:break-word;overflow-wrap:break-word}
 .c1{color:var(--rust-2)}.c2{color:#ff9040}.c3{color:var(--rust)}.c4{color:var(--brass)}
 
 /* NARROW */
@@ -198,6 +200,17 @@ body.narrow .tbtn span{display:none}
 .cteam{margin-top:6px;font-size:clamp(.58rem,1.8vw,.68rem);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .cmsg{margin-top:12px;font-size:.88rem;line-height:1.6;color:var(--cream);
   padding:10px;background:rgba(212,166,104,.07);border:1px solid rgba(212,166,104,.2);border-radius:2px}
+
+/* BENCHMARK COMPARISON */
+.benchmark{margin-top:16px;padding-top:16px;border-top:1px solid var(--line)}
+.bench-title{font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;text-align:center}
+.bench-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.bench-label{font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--cream-2);flex-shrink:0}
+.bench-time{font-family:var(--mono);font-size:.82rem;color:var(--brass);letter-spacing:.06em;flex-shrink:0}
+.bench-bar-wrap{height:6px;background:var(--line);border-radius:2px;margin-top:6px;overflow:hidden;position:relative}
+.bench-bar{height:100%;background:var(--brass);border-radius:2px;transition:width .6s ease;position:absolute;left:0}
+.bench-bar.your{background:var(--rust)}
+.bench-note{font-size:.64rem;color:var(--muted);text-align:center;margin-top:10px;font-style:italic}
 </style>
 </head>
 <body>
@@ -322,14 +335,47 @@ body.narrow .tbtn span{display:none}
         <div class="cteam" id="c-team">—</div>
         <div class="cmsg" id="c-msg"></div>
       </div>
+      
+      <!-- BENCHMARK COMPARISON -->
+      <div class="benchmark">
+        <div class="bench-title">How You Did</div>
+        <div class="bench-row">
+          <div class="bench-label">Your Time</div>
+          <div class="bench-time" id="bench-your">00:00:00</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-label">Best Time</div>
+          <div class="bench-time" id="bench-best">00:00:00</div>
+        </div>
+        <div class="bench-row">
+          <div class="bench-label">Average Time</div>
+          <div class="bench-time" id="bench-avg">00:00:00</div>
+        </div>
+        <div class="bench-bar-wrap">
+          <div class="bench-bar" id="bench-bar-best" style="width:0%"></div>
+          <div class="bench-bar your" id="bench-bar-your" style="width:0%"></div>
+          <div class="bench-bar" id="bench-bar-avg" style="width:0%"></div>
+        </div>
+        <div class="bench-note" id="bench-note">Benchmarks based on estimated times</div>
+      </div>
+      
     </div>
     <button class="btn btn-ghost btn-full" onclick="askPlayAgain()">↩ Play Again</button>
   </div>
 </div>
 
 <script>
-const LOGGER_URL    = 'YOUR_APPS_SCRIPT_LOGGER_URL_HERE';
+// ── FORMSPREE LOGGING ──────────────────────────────────────────
+// Replace this URL with your Formspree endpoint to enable logging
+const LOGGER_URL    = 'https://formspree.io/f/xyklodjj';
 const BACKPACK_NAME = 'Hiking Backpack';
+
+// ── BENCHMARK TIMES ────────────────────────────────────────────
+// EDIT THESE: Change the estimated times (in minutes) for each lock
+// These are used to calculate benchmarks before you have real completion data
+const ESTIMATED_TIMES = [5, 5, 5, 10, 15, 5, 15, 10, 10, 5]; // Lock 1-10 in minutes
+const BENCHMARK_BEST_TIME = 75 * 60; // Best time in seconds (75 minutes = 1h15m)
+// To change benchmark: Update the number before * 60 (that's the minutes)
 const LOCK_THEMES   = ['blue','blue','blue','blue','blue','orange','orange','orange','orange','purple'];
 const HINT_LEVELS   = [
   {label:'💡 Hint #1',cls:'c1'},{label:'💡 Hint #2',cls:'c2'},
@@ -614,10 +660,46 @@ function resetAll(){
 
 function endGame(){
   clearInterval(ticker); ticker=null; st.active=false;
-  const msg='🎊 Congratulations! Thank you for playing our game!';
-  document.getElementById('c-time').textContent=fmt(st.elapsed);
+  
+  // ── BENCHMARK CALCULATION ──────────────────────────────────────
+  // This uses estimated times until real data is available
+  // The best time will eventually come from real leaderboard data
+  const yourTime = st.elapsed;
+  const bestTime = BENCHMARK_BEST_TIME; // Currently using estimated best (1h15m)
+  const avgTime = Math.floor(BENCHMARK_BEST_TIME * 1.3); // Average = 130% of best time
+  
+  // Calculate the maximum for the bar chart (add 10% padding)
+  const maxTime = Math.max(yourTime, bestTime, avgTime) * 1.1;
+  
+  // Update display
+  document.getElementById('c-time').textContent=fmt(yourTime);
   document.getElementById('c-team').textContent=st.team;
+  
+  // Set benchmark times
+  document.getElementById('bench-your').textContent=fmt(yourTime);
+  document.getElementById('bench-best').textContent=fmt(bestTime);
+  document.getElementById('bench-avg').textContent=fmt(avgTime);
+  
+  // Set bar widths (animated via CSS)
+  setTimeout(() => {
+    document.getElementById('bench-bar-your').style.width = (yourTime/maxTime*100) + '%';
+    document.getElementById('bench-bar-best').style.width = (bestTime/maxTime*100) + '%';
+    document.getElementById('bench-bar-avg').style.width = (avgTime/maxTime*100) + '%';
+  }, 100);
+  
+  // Create congratulations message based on performance
+  let msg = '🎊 Congratulations! Thank you for playing our game!';
+  if (yourTime <= bestTime) {
+    msg = '🏆 Amazing! You beat the benchmark time!';
+  } else if (yourTime <= avgTime) {
+    msg = '⭐ Great job! You finished faster than average!';
+  }
   document.getElementById('c-msg').textContent=msg;
+  
+  // NOTE: Once you have real leaderboard data, update bench-note to say:
+  // "Benchmarks based on actual player times" or hide it entirely
+  
+  // Log completion event to Formspree
   logAsync({event:'complete',teamName:st.team,backpackName:BACKPACK_NAME,
             elapsedSeconds:st.elapsed,timeFormatted:fmt(st.elapsed),
             lockTimestamps:st.lockTs,sessionId:st.sessionId});
