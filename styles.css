@@ -105,7 +105,11 @@ section + section { border-top: 1px solid var(--line); }
 .nav-drop { position: relative; }
 .nav-drop-toggle {
   display: inline-flex; align-items: center; gap: 6px;
+  font-size: 0.95rem; color: var(--brass);
+  padding: 6px 2px; position: relative;
+  background: none; border: none; font-family: var(--sans); cursor: pointer;
 }
+.nav-drop-toggle:hover { color: var(--cream); }
 .nav-drop-toggle::after {
   content: ""; width: 6px; height: 6px;
   border-right: 1.5px solid currentColor;
@@ -164,7 +168,7 @@ section + section { border-top: 1px solid var(--line); }
 }
 
 @media (max-width: 680px) {
-  .nav-links a:not(.active):not(.nav-drop-toggle) { display: none; }
+  .nav-links > a:not(.active):not(.nav-drop-toggle) { display: none; }
   .nav-links .nav-drop-toggle { display: inline-flex; }
   .nav-links a.active { display: inline; font-family: var(--serif); font-size: 1.05rem; }
 }
