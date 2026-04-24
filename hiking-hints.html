@@ -132,27 +132,31 @@ input[type=text]:focus{border-color:var(--brass);box-shadow:0 0 0 3px rgba(212,1
 .prog-bar{height:100%;background:var(--brass);border-radius:2px;transition:width .4s ease}
 
 /* LOCK GRID */
-.lock-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(4px,1.2vw,7px)}
-.lc{display:flex;flex-direction:column;align-items:center;gap:3px;
+.lock-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(8px,2vw,12px)}
+.lc{display:flex;flex-direction:column;gap:6px;
   background:var(--forest-deep);border:2px solid transparent;border-radius:2px;
-  padding:clamp(4px,1.5vw,7px) 2px clamp(5px,1.8vw,8px);
+  padding:clamp(8px,2vw,12px);
   transition:border-color .2s,background .2s,opacity .2s}
 .lc.active{outline:2px solid var(--brass)}
 .lc.done{opacity:.5;border-color:var(--brass)!important;background:var(--forest-2)}
 .lc.theme-blue{border-color:#156082}
 .lc.theme-orange{border-color:#C04F15}
 .lc.theme-purple{border-color:#50164A}
-.li-wrap{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+.li-wrap{width:clamp(60px,15vw,80px);height:clamp(60px,15vw,80px);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center}
 .li-wrap img{width:100%;height:100%;object-fit:contain;display:block}
-.lnum{font-size:clamp(.38rem,.45vw + .28rem,.52rem);letter-spacing:.07em;
-  color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.lnum{font-size:clamp(.6rem,2vw,.75rem);letter-spacing:.07em;
+  color:var(--muted);font-family:var(--mono);text-align:center;width:100%;
+  font-weight:600}
 .lc.done .lnum{color:var(--brass)}
-.lbtns{display:flex;gap:3px}
-.lb{width:clamp(20px,5.5vw,26px);height:clamp(20px,5.5vw,26px);border-radius:4px;border:none;
+.lc-body{display:flex;align-items:center;gap:clamp(8px,2vw,12px)}
+.lbtns{display:flex;flex-direction:column;gap:6px;flex:1}
+.lb{width:100%;height:clamp(32px,8vw,40px);border-radius:4px;border:none;
   cursor:pointer;display:flex;align-items:center;justify-content:center;
   font-size:clamp(.65rem,2vw,.8rem);font-weight:700;touch-action:manipulation;
-  transition:transform .1s,background .15s}
-.lb:active{transform:scale(.88)}
+  transition:transform .1s,background .15s;
+  letter-spacing:.08em;text-transform:uppercase}
+.lb:active{transform:scale(.96)}
 .lb-done{background:rgba(212,166,104,.12);color:var(--brass);border:1px solid rgba(212,166,104,.25)}
 .lb-done.on{background:var(--brass);color:var(--forest)}
 .lb-hint{background:rgba(168,73,43,.1);color:var(--rust-2);border:1px solid rgba(168,73,43,.2)}
@@ -452,11 +456,13 @@ function buildGrid(){
     const d=document.createElement('div');
     d.className='lc theme-'+LOCK_THEMES[i]; d.id='lc'+i;
     d.innerHTML=`
-      <div class="li-wrap"><img src="${LOCK_IMGS[i]}" alt="Lock ${i+1}"></div>
       <div class="lnum">LOCK ${i+1}</div>
-      <div class="lbtns">
-        <button class="lb lb-done" id="db${i}" onclick="event.stopPropagation();toggleDone(${i})" title="Mark solved">✓</button>
-        <button class="lb lb-hint" id="hb${i}" onclick="event.stopPropagation();toggleHint(${i})" title="Hints">?</button>
+      <div class="lc-body">
+        <div class="li-wrap"><img src="${LOCK_IMGS[i]}" alt="Lock ${i+1}"></div>
+        <div class="lbtns">
+          <button class="lb lb-hint" id="hb${i}" onclick="event.stopPropagation();toggleHint(${i})" title="View hints">Hints</button>
+          <button class="lb lb-done" id="db${i}" onclick="event.stopPropagation();toggleDone(${i})" title="Mark solved">Solved!</button>
+        </div>
       </div>`;
     g.appendChild(d);
   });
