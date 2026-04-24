@@ -168,9 +168,8 @@ section + section { border-top: 1px solid var(--line); }
 }
 
 @media (max-width: 680px) {
-  .nav-links > a:not(.active):not(.nav-drop-toggle) { display: none; }
-  .nav-links .nav-drop-toggle { display: inline-flex; }
-  .nav-links a.active { display: inline; font-family: var(--serif); font-size: 1.05rem; }
+  .nav-links { gap: clamp(10px, 2vw, 14px); }
+  .nav-links a { font-size: 0.88rem; }
 }
 
 /* ── BUTTONS ────────────────────────────────────────── */
