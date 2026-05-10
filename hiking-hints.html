@@ -365,9 +365,8 @@ body.narrow .tbtn span{display:none}
 </div>
 
 <script>
-// ── FORMSPREE LOGGING ──────────────────────────────────────────
-// Replace this URL with your Formspree endpoint to enable logging
-const LOGGER_URL    = 'https://formspree.io/f/xyklodjj';
+// ── GOOGLE APPS SCRIPT LOGGING ─────────────────────────────────
+const LOGGER_URL    = 'https://script.google.com/macros/s/AKfycbxn9ipLPhv16_vM_Ss77kVFTiTGjGWqrSxpv4XT4bjBIFzBq0njX1VmkvUn23vU0afJcQ/exec';
 const BACKPACK_NAME = 'Hiking Backpack';
 
 // ── BENCHMARK TIMES ────────────────────────────────────────────
@@ -660,33 +659,33 @@ function resetAll(){
 
 function endGame(){
   clearInterval(ticker); ticker=null; st.active=false;
-  
+
   // ── BENCHMARK CALCULATION ──────────────────────────────────────
   // This uses estimated times until real data is available
   // The best time will eventually come from real leaderboard data
   const yourTime = st.elapsed;
   const bestTime = BENCHMARK_BEST_TIME; // Currently using estimated best (1h15m)
   const avgTime = Math.floor(BENCHMARK_BEST_TIME * 1.3); // Average = 130% of best time
-  
+
   // Calculate the maximum for the bar chart (add 10% padding)
   const maxTime = Math.max(yourTime, bestTime, avgTime) * 1.1;
-  
+
   // Update display
   document.getElementById('c-time').textContent=fmt(yourTime);
   document.getElementById('c-team').textContent=st.team;
-  
+
   // Set benchmark times
   document.getElementById('bench-your').textContent=fmt(yourTime);
   document.getElementById('bench-best').textContent=fmt(bestTime);
   document.getElementById('bench-avg').textContent=fmt(avgTime);
-  
+
   // Set bar widths (animated via CSS)
   setTimeout(() => {
     document.getElementById('bench-bar-your').style.width = (yourTime/maxTime*100) + '%';
     document.getElementById('bench-bar-best').style.width = (bestTime/maxTime*100) + '%';
     document.getElementById('bench-bar-avg').style.width = (avgTime/maxTime*100) + '%';
   }, 100);
-  
+
   // Create congratulations message based on performance
   let msg = '🎊 Congratulations! Thank you for playing our game!';
   if (yourTime <= bestTime) {
@@ -695,14 +694,24 @@ function endGame(){
     msg = '⭐ Great job! You finished faster than average!';
   }
   document.getElementById('c-msg').textContent=msg;
-  
+
   // NOTE: Once you have real leaderboard data, update bench-note to say:
   // "Benchmarks based on actual player times" or hide it entirely
-  
-  // Log completion event to Formspree
+
+  // ── DETECT DEVICE + BROWSER (best-effort) ─────────────────────
+  const ua = navigator.userAgent;
+  const device  = /Mobi|Android/i.test(ua) ? 'mobile' : 'desktop';
+  const browser = /Edg/i.test(ua)    ? 'Edge'
+                : /Chrome/i.test(ua)  ? 'Chrome'
+                : /Firefox/i.test(ua) ? 'Firefox'
+                : /Safari/i.test(ua)  ? 'Safari'
+                : 'Other';
+
+  // Log completion event to Google Sheets
   logAsync({event:'complete',teamName:st.team,backpackName:BACKPACK_NAME,
             elapsedSeconds:st.elapsed,timeFormatted:fmt(st.elapsed),
-            lockTimestamps:st.lockTs,sessionId:st.sessionId});
+            lockTimestamps:st.lockTs,hintLog:st.hintLog,
+            device,browser,sessionId:st.sessionId});
   clearSt(); show('complete');
 }
 
@@ -713,7 +722,7 @@ function clearSt(){try{localStorage.removeItem(LS_KEY)}catch(e){}}
 
 // ── LOGGER ─────────────────────────────────────────────────
 function logAsync(p){
-  if(!LOGGER_URL||LOGGER_URL.includes('YOUR_')) return;
+  if(!LOGGER_URL||LOGGER_URL.includes('YOUR_')||LOGGER_URL.includes('formspree')) return;
   fetch(LOGGER_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(p)}).catch(()=>{});
 }
 
